@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, SetStateAction, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { ContextType } from "../types/ContextType";
 
 export const Context = createContext<ContextType>({

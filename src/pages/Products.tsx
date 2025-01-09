@@ -1,8 +1,10 @@
+import getProducts from "../services/getProducts";
 
 const Products = () => {
-  return (
-    <div>Products</div>
-  )
-}
+  const products = getProducts();
+  console.log(products);
+  
+  return <div>Products</div>;
+};
 
-export default Products
+export default Products;
