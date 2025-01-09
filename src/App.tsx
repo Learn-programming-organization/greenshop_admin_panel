@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import LoginPage from './components/LoginPage'
-
+import { useContext } from "react"
+import { Context } from "./context/Context"
+import DashboardRoutes from "./routes/DashboardRoutes"
+import LoginRoutes from "./routes/LoginRoutes"
 
 function App() {
+  const { token } = useContext(Context)
 
-  return (
-    <div className='grid place-items-center w-[1440px] h-[900px] bg-gradient-to-r from-[#FEAF00] to-[#F8D442]'>
-      <LoginPage></LoginPage>
-      <div className='bg-green-400'>
-      </div>
-    </div>
-  )
+  if(token){
+    return <DashboardRoutes />
+  }else {
+    return <LoginRoutes />
+  }
 }
 
 export default App

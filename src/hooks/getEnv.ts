@@ -1,1 +1,0 @@
-export const API = import.meta.env.NEXT_PUBLIC_API

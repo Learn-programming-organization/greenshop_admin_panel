@@ -1,17 +1,12 @@
-
 import React, { createContext, ReactNode, SetStateAction, useEffect, useState } from "react";
-
-export interface ContextType {
-    token: string | null;
-    setToken: React.Dispatch<SetStateAction<string | null>>
-}
+import { ContextType } from "../types/ContextType";
 
 export const Context = createContext<ContextType>({
-    token: "",
-    setToken: () => ""
+    token: null,
+    setToken: () => null
 })
 
-export const ContextProvider: React.FC<{children: ReactNode}> = ({children}) => {
+export const AuthContext: React.FC<{children: ReactNode}> = ({children}) => {
     const [token, setToken] = useState<null | string>(localStorage.getItem("token") || null)
 
     useEffect(() => {
