@@ -1,3 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.login-bg {
+  background-image: url("/login_image.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.ant-btn-color-primary {
+  background-color: #46a358 !important;
+}
+
+.ant-btn-color-primary:hover {
+  background-color: #46a358 !important;
+  opacity: 80%;
+}
+
+.ant-menu-item-selected {
+  background-color: #57c36c !important;
+  box-shadow: 0 0 2px 2px #46a358;
+}
+
+.ant-input:focus, .ant-select-selector:focus {
+  border-color: #46a358 !important;
+}
+
+.ant-input:hover, .ant-select-selector:hover {
+  border-color: #46a358 !important;
+}
+
+.ant-select-open {
+  border-color: #46a358 !important;
+}
+
+.ant-spin-dot {
+  color: #46a358 !important;
+}
+
+.ant-pagination-item {
+  border-color: #46a358 !important;
+}
+
+.ant-pagination-item > a {
+  color: #46a358 !important;
+}

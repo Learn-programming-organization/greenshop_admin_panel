@@ -4,4 +4,5 @@ export const PATH = {
     categories: "/categories",
     users: "/users",
     products: "/products",
+    productCreate: "/products/create"
 }

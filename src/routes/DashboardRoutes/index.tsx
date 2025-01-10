@@ -3,6 +3,7 @@ import { Categories, Home, Products, Profile, Users } from "../../pages";
 import { RouteType } from "../../types/RouteType";
 import NavbarMenu from "../../components/NavbarMenu";
 import { PATH } from "../../hooks/usePath";
+import ProductsCrud from "../../components/ProductsCrud";
 
 const DashboardRoutes = () => {
   const routes: RouteType[] = [
@@ -23,11 +24,16 @@ const DashboardRoutes = () => {
     },
     {
       id: 4,
+      path: PATH.productCreate,
+      element: <ProductsCrud />,
+    },
+    {
+      id: 5,
       path: PATH.categories,
       element: <Categories />,
     },
     {
-      id: 5,
+      id: 6,
       path: PATH.users,
       element: <Users />,
     },
@@ -35,7 +41,7 @@ const DashboardRoutes = () => {
 
   return (
     <div className="flex justify-between">
-        <NavbarMenu />
+      <NavbarMenu />
       <div className="w-[80%]">
         <Routes>
           {routes.map((item: RouteType) => (
