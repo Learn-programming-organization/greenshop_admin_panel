@@ -6,21 +6,23 @@ import getCategories from "../services/getCategories";
 import { instance } from "../hooks/instance";
 import { Button, Input, Select, Upload, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProductsCrud = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { token } = useContext(Context);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const formData = new FormData();
 
   const categories = getCategories("search");
   const [chooseImg, setChooseImg] = useState<string | null>(null);
+  const [getImg, setGetImg] = useState<any>({});
 
   const [productName, setProductName] = useState<string>("");
   const [category, setCategory] = useState<string | null>(null);
-  const [cost, setCost] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
-  const [discount, setDiscount] = useState<number>(0);
+  const [cost, setCost] = useState<number | string>("");
+  const [count, setCount] = useState<number | string>("");
+  const [discount, setDiscount] = useState<number | string>("");
   const [description, setDescription] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
   const [status, setStatus] = useState<string>("");
@@ -28,9 +30,10 @@ const ProductsCrud = () => {
   const [tags, setTags] = useState<string[] | null>(null);
 
   function handleChooseImg(e: ChangeEvent<HTMLInputElement>) {
-    if(e.target.files) {
-        setChooseImg(URL.createObjectURL(e.target.files[0]))
-        formData.append("file", e.target.files[0])
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setChooseImg(URL.createObjectURL(file));
+      setGetImg(file);
     }
   }
 
@@ -41,38 +44,43 @@ const ProductsCrud = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          instance().post(
-            "/media/upload-photo",
-            {},
-            {
-              params: {
-                id: res.data.product_id,
-                file: formData,
-              },
+          const formData = new FormData();
+          formData.append("file", getImg);
+          instance().post("/media/upload-photo", formData, {
+            params: {
+              id: res.data.product_id,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
             }
-          );
+          });
         }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      navigate(-1);
+        toast.success("Products successfully added")
+      setTimeout(() => {
+        setIsLoading(false)
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+        navigate(-1);
+      }, 600);
     },
   });
 
   function handleAddProducts(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = {
-        category_id: category,
-        cost: cost,
-        count: count,
-        discount: discount,
-        product_description: description,
-        product_name: productName,
-        products_status: status,
-        short_description: shortDescription,
-        size: size,
-        tags: tags,
-    }
-    addMutation.mutate(data)
+      category_id: category,
+      cost: cost,
+      count: count,
+      discount: discount,
+      product_description: description,
+      product_name: productName,
+      product_status: status,
+      short_description: shortDescription,
+      size: size,
+      tags: tags,
+    };
+    addMutation.mutate(data);
+    setIsLoading(true)
   }
 
   const uploadProps: UploadProps = {
@@ -93,9 +101,10 @@ const ProductsCrud = () => {
 
   return (
     <form onSubmit={handleAddProducts} className="p-5">
+        <Toaster position="bottom-center" reverseOrder={false} />
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-2xl">Product Create</h2>
-        <Button htmlType="submit" type="primary" size="large">
+        <Button loading={isLoading} htmlType="submit" type="primary" size="large">
           Save
         </Button>
       </div>
@@ -117,7 +126,7 @@ const ProductsCrud = () => {
             showSearch
             optionFilterProp="label"
             options={categories}
-          ></Select>
+          />
           <Input
             value={cost}
             onChange={(e) => setCost(Number(e.target.value))}
@@ -141,11 +150,25 @@ const ProductsCrud = () => {
           />
         </div>
         <div className="w-[49%] p-5 rounded-md border border-slate-400 space-y-2">
-          <Input
+        <Select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            placeholder="Enter Product status"
+            onChange={(e) => setStatus(e)}
+            allowClear
+            className="w-full"
+            placeholder="Choose status"
             size="large"
+            showSearch
+            optionFilterProp="label"
+            options={[
+                {
+                    label: "New Arrivals",
+                    value: "new-arrival",
+                },
+                {
+                    label: "Sale",
+                    value: "sale"
+                }
+            ]}
           />
           <Input
             value={description}

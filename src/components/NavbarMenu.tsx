@@ -68,9 +68,9 @@ const items: MenuItem[] = [
 const NavbarMenu: React.FC = () => {
   const [logoutModal, setLogOutModal] = useState<boolean>(false);
   function handleLogOut() {
+    location.replace("/")
     localStorage.clear();
-    location.pathname = "/";
-    location.reload();
+    setTimeout(() => location.reload(), 200)
   }
 
   return (
