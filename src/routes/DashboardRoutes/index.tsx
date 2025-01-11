@@ -3,7 +3,7 @@ import { Categories, Home, Products, Profile, Users } from "../../pages";
 import { RouteType } from "../../types/RouteType";
 import NavbarMenu from "../../components/NavbarMenu";
 import { PATH } from "../../hooks/usePath";
-import ProductsCrud from "../../components/ProductsCrud";
+import ProductsCrud from "../../pages/ProductsCrud";
 
 const DashboardRoutes = () => {
   const routes: RouteType[] = [

@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { instance } from '../hooks/instance'
 import { CategoryType } from '../types/CategoryType'
 
-const getCategories = (filter: "search" | "get"): CategoryType[] | {label: string, value: number}[] => {
+const getCategories = (filter: "search" | "get") => {
     const {token} = useContext(Context)
     const {data: Categories = []} = useQuery({
         queryKey: ['categories'],

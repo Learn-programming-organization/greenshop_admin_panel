@@ -1,7 +1,10 @@
+import Caption from "../components/Caption"
 
 const Users = () => {
   return (
-    <div>Users</div>
+    <div>
+      <Caption path="" title="Users" count={10} addBtnTitle="Create user" />
+    </div>
   )
 }
 
