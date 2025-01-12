@@ -1,14 +1,17 @@
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { Context } from "../context/Context";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 import getCategories from "../services/getCategories";
 import { instance } from "../hooks/instance";
 import { Button, Input, Select, Upload, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import toast, { Toaster } from "react-hot-toast";
+import default_image from "../../public/default-featured-image.jpg"
 
 const ProductsCrud = () => {
+  const { id } = useParams()
+
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useContext(Context);
   const queryClient = useQueryClient();
@@ -16,7 +19,7 @@ const ProductsCrud = () => {
 
   const categories = getCategories("search");
   const [chooseImg, setChooseImg] = useState<string | null>(null);
-  const [getImg, setGetImg] = useState<any>({});
+  const [getImg, setGetImg] = useState<any>(null);
 
   const [productName, setProductName] = useState<string>("");
   const [category, setCategory] = useState<string | null>(null);
@@ -25,7 +28,7 @@ const ProductsCrud = () => {
   const [discount, setDiscount] = useState<number | string>("");
   const [description, setDescription] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string | null>(null);
   const [size, setSize] = useState<string[] | null>(null);
   const [tags, setTags] = useState<string[] | null>(null);
 
@@ -51,23 +54,47 @@ const ProductsCrud = () => {
               id: res.data.product_id,
             },
             headers: {
-                Authorization: `Bearer ${token}`,
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
         }),
     onSuccess: () => {
-        toast.success("Products successfully added")
+      toast.success("Products successfully added");
       setTimeout(() => {
-        setIsLoading(false)
+        setIsLoading(false);
         queryClient.invalidateQueries({ queryKey: ["products"] });
         navigate(-1);
       }, 600);
     },
   });
 
+  const editMutation = useMutation({
+    mutationFn: (data: any) => instance().put("/product", data, {
+      headers: {Authorization: `Bearer ${token}`}
+    }).then(() => {
+      if(getImg) {
+        const formData = new FormData()
+        formData.append("file", getImg)
+        instance().post("/media/upload-photo", formData, {
+          params: {id},
+          headers: {Authorization: `Bearer ${token}`}
+        })
+      }
+    }),
+    onSuccess: () => {
+      toast.success("Product updated")
+      setTimeout(() => {
+        setIsLoading(false)
+        queryClient.invalidateQueries({queryKey: ['products']})
+        // location.reload()
+        navigate(-1)
+      }, 600)
+    }
+  })
+
   function handleAddProducts(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = {
+    const data: any = {
       category_id: category,
       cost: cost,
       count: count,
@@ -79,33 +106,62 @@ const ProductsCrud = () => {
       size: size,
       tags: tags,
     };
-    addMutation.mutate(data);
-    setIsLoading(true)
+    if(id) {
+      data.product_id = id
+      editMutation.mutate(data)
+    }
+    else {
+      addMutation.mutate(data);
+      setIsLoading(true);
+    }
   }
 
-  const uploadProps: UploadProps = {
-    name: "file",
-    action:
-      "http://3.125.43.204:7777/v1/media/upload-photo?id=1cbe75db-cb57-4271-9932-1ea803739488",
-    headers: {
-      Authorization: token as string,
-    },
-    onChange(info) {
-      if (info.file.status === "done") {
-        console.log(`${info.file.name} muvaffaqiyatli yuklandi.`);
-      } else if (info.file.status === "error") {
-        console.log(`${info.file.name} yuklashda xatolik yuz berdi.`);
-      }
-    },
-  };
+  useEffect(() => {
+    if(id) {
+      instance().get(`/product/${id}`).then(res => {
+        setProductName(res.data.product_name)
+        setCategory(res.data.category_id)
+        setCost(res.data.cost)
+        setCount(res.data.count)
+        setDiscount(res.data.discount)
+        setStatus(res.data.product_status)
+        setDescription(res.data.product_description)
+        setShortDescription(res.data.short_description)
+        setSize(res.data.size)
+        setTags(res.data.tags)
+        setChooseImg(res.data.image_url ? res.data.image_url[0] : default_image)
+      })
+    }
+  }, [id])
+
+  // const uploadProps: UploadProps = {
+  //   name: "file",
+  //   action:
+  //     "http://3.125.43.204:7777/v1/media/upload-photo?id=1cbe75db-cb57-4271-9932-1ea803739488",
+  //   headers: {
+  //     Authorization: token as string,
+  //   },
+  //   onChange(info) {
+  //     if (info.file.status === "done") {
+  //       console.log(`${info.file.name} muvaffaqiyatli yuklandi.`);
+  //     } else if (info.file.status === "error") {
+  //       console.log(`${info.file.name} yuklashda xatolik yuz berdi.`);
+  //     }
+  //   },
+  // };
 
   return (
     <form onSubmit={handleAddProducts} className="p-5">
-        <Toaster position="bottom-center" reverseOrder={false} />
+      <Toaster position="bottom-center" reverseOrder={false} />
       <div className="flex items-center justify-between">
-        <h2 className="font-bold text-2xl">Product Create</h2>
-        <Button loading={isLoading} htmlType="submit" type="primary" size="large">
-          Save
+        <h2 className="font-bold text-2xl">Product {id ? "edit" : "create"}</h2>
+        <Button
+          loading={isLoading}
+          htmlType="submit"
+          type="primary"
+          size="large"
+        >
+          {id ? "Edit" : "Save"}
         </Button>
       </div>
       <div className="flex justify-between mt-5">
@@ -150,7 +206,7 @@ const ProductsCrud = () => {
           />
         </div>
         <div className="w-[49%] p-5 rounded-md border border-slate-400 space-y-2">
-        <Select
+          <Select
             value={status}
             onChange={(e) => setStatus(e)}
             allowClear
@@ -160,14 +216,14 @@ const ProductsCrud = () => {
             showSearch
             optionFilterProp="label"
             options={[
-                {
-                    label: "New Arrivals",
-                    value: "new-arrival",
-                },
-                {
-                    label: "Sale",
-                    value: "sale"
-                }
+              {
+                label: "New Arrivals",
+                value: "new-arrival",
+              },
+              {
+                label: "Sale",
+                value: "sale",
+              },
             ]}
           />
           <Input
