@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { Context } from "../context/Context"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { instance } from "../hooks/instance"
-import { DeleteOutlined, MoreOutlined } from "@ant-design/icons"
+import { DeleteOutlined } from "@ant-design/icons"
 import { UserType } from "../types/UserType"
 import toast from "react-hot-toast"
 

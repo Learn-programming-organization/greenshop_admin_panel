@@ -6,7 +6,6 @@ import { instance } from "../hooks/instance";
 import { Button, Modal } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import toast, { Toaster } from "react-hot-toast";
-import default_image from "../../public/default-featured-image.jpg"
 
 const ProductsMore = () => {
   const { id } = useParams();
@@ -121,7 +120,7 @@ const ProductsMore = () => {
         </ul>
       </div>
       <div className="border-2 w-[400px] mx-auto border-slate-300 rounded-md">
-        <img src={productsMore.image_url ? productsMore.image_url[0] : default_image} alt="product image" width={400} height={400}/>
+        <img src={productsMore.image_url ? productsMore.image_url[0] : "/default-featured-image.jpg"} alt="product image" width={400} height={400}/>
       </div>
 
       <Modal open={deleteModal} onCancel={() => setDeleteModal(false)} onOk={() => deleteMutation.mutate()}>

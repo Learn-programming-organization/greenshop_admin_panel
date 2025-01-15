@@ -1,8 +1,6 @@
 import React from "react";
 import { ProductTableType } from "../types/ProductTableType";
 import { Table } from "antd";
-import { ProductType } from "../types/ProductType";
-import { UserType } from "../types/UserType";
 
 const CustomTable: React.FC<ProductTableType> = ({
   columns,

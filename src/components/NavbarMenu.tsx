@@ -68,15 +68,17 @@ const items: MenuItem[] = [
 const NavbarMenu: React.FC = () => {
   const [logoutModal, setLogOutModal] = useState<boolean>(false);
   function handleLogOut() {
-    location.replace("/")
+    location.replace("/");
     localStorage.clear();
-    setTimeout(() => location.reload(), 200)
+    setTimeout(() => location.reload(), 200);
   }
 
   return (
     <div className="!w-[20%] h-[100vh] bg-[#357b43] relative">
       <div className="p-5 border-b-[2px] border-white">
-        <img src={Logo} alt="Site Logo" width={190} />
+        <a href="/">
+          <img src={Logo} alt="Site Logo" width={190} />
+        </a>
       </div>
       <Menu
         theme="dark"

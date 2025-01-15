@@ -42,7 +42,7 @@ const DashboardRoutes = () => {
       element: <ProductsMore />,
     },
     {
-      id: 7,
+      id: 8,
       path: PATH.productEdit,
       element: <ProductsCrud />,
     },

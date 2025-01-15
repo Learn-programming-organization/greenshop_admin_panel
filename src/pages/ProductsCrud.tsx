@@ -1,13 +1,12 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { Context } from "../context/Context";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { data, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import getCategories from "../services/getCategories";
 import { instance } from "../hooks/instance";
 import { Button, Input, Select, Upload, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import toast, { Toaster } from "react-hot-toast";
-import default_image from "../../public/default-featured-image.jpg"
 
 const ProductsCrud = () => {
   const { id } = useParams()
@@ -129,7 +128,7 @@ const ProductsCrud = () => {
         setShortDescription(res.data.short_description)
         setSize(res.data.size)
         setTags(res.data.tags)
-        setChooseImg(res.data.image_url ? res.data.image_url[0] : default_image)
+        setChooseImg(res.data.image_url ? res.data.image_url[0] : "/default-featured-image.jpg")
       })
     }
   }, [id])
